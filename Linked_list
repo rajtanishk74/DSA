@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;    
+}
+
+// Insert at the beginning
+void insertFirst(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// Insert at the end
+void insertLast(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+    struct Node* temp = *head;
+    while (temp->next != NULL)
+        temp = temp->next;
+    temp->next = newNode;
+}
+
+// Insert after a given node
+void insertAfter(struct Node* prevNode, int data) {
+    if (prevNode == NULL) {
+        printf("Previous node cannot be NULL\n");
+        return;
+    }
+    struct Node* newNode = createNode(data);
+    newNode->next = prevNode->next;
+    prevNode->next = newNode;
+}
+
+// Delete the first node
+void deleteFirst(struct Node** head) {
+    if (*head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    struct Node* temp = *head;
+    *head = (*head)->next;
+    free(temp);
+}
+
+// Delete the last node
+void deleteLast(struct Node** head) {
+    if (*head == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    struct Node* temp = *head;
+    if (temp->next == NULL) {
+        free(temp);
+        *head = NULL;
+        return;
+    }
+    while (temp->next->next != NULL)
+        temp = temp->next;
+    free(temp->next);
+    temp->next = NULL;
+}
+
+// Delete a node after a given node
+void deleteAfter(struct Node* prevNode) {
+    if (prevNode == NULL || prevNode->next == NULL) {
+        printf("No node to delete after the given node\n");
+        return;
+    }
+    struct Node* temp = prevNode->next;
+    prevNode->next = temp->next;
+    free(temp);
+}
+
+// Function to display the linked list
+void displayList(struct Node* node) {
+    while (node != NULL) {
+        printf("%d -> ", node->data);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+// Main function
+int main() {
+    struct Node* head = NULL;
+
+    // Test cases for linked list operations
+    insertFirst(&head, 10);
+    insertFirst(&head, 20);
+    insertLast(&head, 30);
+    insertLast(&head, 40);
+    insertAfter(head->next, 25); // Insert 25 after 20
+
+    printf("Linked list after insertion:\n");
+    displayList(head);
+
+    deleteFirst(&head);
+    printf("Linked list after deleting first:\n");
+    displayList(head);
+
+    deleteLast(&head);
+    printf("Linked list after deleting last:\n");
+    displayList(head);
+
+    deleteAfter(head); // Delete after the first node (which is now 25)
+    printf("Linked list after deleting after second node:\n");
+    displayList(head);
+
+    return 0;
+}
